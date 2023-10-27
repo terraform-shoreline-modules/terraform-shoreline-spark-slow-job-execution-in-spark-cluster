@@ -1,0 +1,146 @@
+{
+  "name": "slow_job_execution_in_spark_cluster",
+  "description": "This incident type describes a situation where jobs executed in a Spark cluster are running slowly. The root cause of this problem is often due to high resource utilization and inefficient data processing. To resolve this issue, measures such as resource isolation, cluster optimization, job submission improvements, proactive monitoring, and user training are implemented to improve performance and prevent future occurrences.",
+  "params": [
+    {
+      "name": "CONFIG_FILE",
+      "value": ""
+    },
+    {
+      "name": "MASTER_URL",
+      "value": ""
+    },
+    {
+      "name": "CONF_VALUE",
+      "value": ""
+    },
+    {
+      "name": "CONF_KEY",
+      "value": ""
+    },
+    {
+      "name": "APPLICATION_JAR",
+      "value": ""
+    },
+    {
+      "name": "APPLICATION_ID",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Slow Job Execution in Spark Cluster\nThis incident type describes a situation where jobs executed in a Spark cluster are running slowly. The root cause of this problem is often due to high resource utilization and inefficient data processing. To resolve this issue, measures such as resource isolation, cluster optimization, job submission improvements, proactive monitoring, and user training are implemented to improve performance and prevent future occurrences."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the current CPU and memory usage of the Spark cluster"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `top`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the current disk usage of the Spark cluster"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `df -h`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the resource allocation and usage of the Spark cluster"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `yarn top`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the current Spark job queue and status"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `spark-submit --master ${MASTER_URL} --status ${APPLICATION_ID}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Spark job logs for any errors or warnings"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `yarn logs -applicationId ${APPLICATION_ID}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Spark job configuration for any inefficiencies"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `spark-submit --master ${MASTER_URL} --properties-file ${CONFIG_FILE} --conf ${CONF_KEY}=${CONF_VALUE} ${APPLICATION_JAR}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Spark job execution plan for any bottlenecks"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `spark-submit --master ${MASTER_URL} --conf spark.sql.execution.debug=true ${APPLICATION_JAR}`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Optimize cluster configuration: Another possible solution is to optimize the configuration of the Spark cluster, such as tuning the Spark executor memory settings, or changing the number of Spark executors."
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_spark_config_update()"
+    }
+  ]
+}
